@@ -8,12 +8,14 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ImageViewerOriginalComponent } from './image-viewer-original/image-viewer-original.component';
 library.add(fas, far);
 
 @NgModule({
   declarations: [
     AppComponent,
-    ImageViewerComponent
+    ImageViewerComponent,
+    ImageViewerOriginalComponent
   ],
   imports: [
     BrowserModule,

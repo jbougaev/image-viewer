@@ -4,6 +4,7 @@ import '../../assets/imageviewer.js';
 import '../../assets/imageviewer.scss';
 import { Observable } from 'rxjs';
 
+
 declare var $: any;
 declare var ImageViewer: any;
 
@@ -214,8 +215,12 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
   }
 
   insertIframe(widthIframe: number, heightIframe: number) {
-    const ivImageWrap = document.getElementsByClassName('iv-image-wrap').item(0);
+   // const ivImageWrap = document.getElementsByClassName('iv-image-wrap').item(0);
 
+
+    const ivLargeImage = document.getElementsByClassName('image-gallery-2').item(0);
+    const ivImageWrap = ivLargeImage.getElementsByClassName('iv-image-wrap').item(0);
+   
     const iframe = document.createElement('iframe');
 
     iframe.id = this.getIdIframe();
@@ -253,21 +258,34 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     this.limparCacheElementos();
   }
 
+
+  findAncestor(el, cls) {
+    while (
+      (el = el.parentElement) &&
+      !el.classList.contains(cls));
+  return el;
+}
+
   limparCacheElementos() {
 
     //  const container = document.getElementById(this.idContainer); //gives an error: cannot remove child node from this container
-    const container = document.getElementsByClassName('iv-image-wrap').item(0);
+  //  const container = document.getElementsByClassName('iv-image-wrap').item(0);   
     const iframeElement = document.getElementById(this.getIdIframe());
     const ivLargeImage = document.getElementsByClassName('iv-large-image').item(0);
-
+    let container;
     if (iframeElement) {
-      //TODO check if an element to delete is a child of the container
-      this.renderer.removeChild(container, iframeElement);
+
+      container =  this.findAncestor(iframeElement, 'image-gallery-2');
+      setTimeout(() => {       
+          this.renderer.removeChild(container, iframeElement); 
+      }, 1000);
+      
     }
 
     if (iframeElement) {
-       //TODO check if an element to delete is a child of the container
-      this.renderer.removeChild(container, ivLargeImage);
+
+      container = this.findAncestor(iframeElement, 'image-gallery-2');      
+      setTimeout(() => { this.renderer.removeChild(container, ivLargeImage); }, 1000);     
     }
 
     this.setStyleClass('iv-loader', 'visibility', 'auto');

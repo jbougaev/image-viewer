@@ -1,11 +1,11 @@
-<app-image-viewer [images]="images" [imagesChanged$]="eventsSubject.asObservable()"
+<!--<app-image-viewer [images]="images" [imagesChanged$]="eventsSubject.asObservable()"
                   [idContainer]="'idOnHTML'"
                   [loadOnInit]="true"
                   (onNext)="onNext($event)"
                   (onPrevious)="onNext($event)"
-                  ></app-image-viewer>
+                  ></app-image-viewer>-->
 
-<ng-template #content let-modal>
+<!--<ng-template #content let-modal>
   <div class="modal-header">
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
@@ -22,4 +22,9 @@
   </div>
 </ng-template>
 
-<button (click)="onModal()">Open modal</button>
+<button (click)="onModal()">Open modal</button>-->
+
+<app-image-viewer-original [images]="images" 
+                  [idContainer]="'idOnHTML'"
+                  [loadOnInit]="true"
+                 ></app-image-viewer-original>
