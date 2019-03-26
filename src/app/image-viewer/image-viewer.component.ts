@@ -287,11 +287,11 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit {
       this.currentImageIndex = 1;
     }
     this.onNext.emit(this.currentImageIndex);
-    if (!this.isPDF() && this.showOnlyPDF) {
-      this.proximaImagem();
-      return;
-    }
-    this.showImage();
+    //if (!this.isPDF() && this.showOnlyPDF) {
+    //  this.proximaImagem();
+    //  return;
+    //}
+    //this.showImage();
   }
 
   imagemAnterior() {
@@ -301,11 +301,11 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit {
       this.currentImageIndex = this.totalImagens;
     }
     this.onPrevious.emit(this.currentImageIndex);
-    if (!this.isPDF() && this.showOnlyPDF) {
-      this.imagemAnterior();
-      return;
-    }
-    this.showImage();
+    //if (!this.isPDF() && this.showOnlyPDF) {
+    //  this.imagemAnterior();
+    //  return;
+    //}
+    //this.showImage();
   }
 
   rotacionarDireita() {
