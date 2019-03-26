@@ -75,10 +75,10 @@
     var imageViewHtml = '<div class="iv-loader"></div> <div class="iv-snap-view">' + '<div class="iv-snap-image-wrap">' + '<div class="iv-snap-handle"></div>' + '</div>' + '<div class="iv-zoom-slider"><div class="iv-zoom-handle"></div></div></div>' + '<div class="iv-image-view" ><div class="iv-image-wrap" ></div></div>';
 
     //add a full screen view
-    $(function () {
-        if(!$body.length) $body = $('body');
-        $body.append('<div id="iv-container">' + imageViewHtml + '<div class="iv-close"></div><div>');
-    });
+    //$(function () {
+    //    if(!$body.length) $body = $('body');
+    //    $body.append('<div id="iv-container">' + imageViewHtml + '<div class="iv-close"></div><div>');
+    //});
 
     function Slider(container, options) {
         this.container = container;

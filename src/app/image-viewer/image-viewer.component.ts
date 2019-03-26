@@ -1,10 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, OnDestroy } from '@angular/core';
-
-import '../../assets/imageviewer.js';
-import '../../assets/imageviewer.scss';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges } from '@angular/core';
 import { Observable } from 'rxjs';
-
-
 declare var $: any;
 declare var ImageViewer: any;
 
@@ -12,14 +7,11 @@ declare var ImageViewer: any;
  * @author Breno Prata - 22/12/2017
  */
 @Component({
-
   selector: 'app-image-viewer',
-
   templateUrl: './image-viewer.component.html',
-
   styleUrls: ['./image-viewer.component.scss']
 })
-export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy {
+export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit {
 
   BASE_64_IMAGE = 'data:image/png;base64,';
   BASE_64_PNG = `${this.BASE_64_IMAGE} `;
@@ -57,6 +49,9 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
   @Output() onNext = new EventEmitter();
   @Output() onPrevious = new EventEmitter();
 
+  @Input() imagesChanged$: Observable<any>;
+  private eventsSubscription: any
+
   viewer;
   wrapper;
   curSpan;
@@ -71,17 +66,14 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
 
   zoomPercent = 100;
 
-  @Input() imagesChanged$: Observable<any>;
-  private eventsSubscription: any
-
   constructor(private renderer: Renderer2) { }
 
   ngOnInit() {
-    
+
     this.imagesChange();
 
     this.eventsSubscription = this.imagesChanged$.subscribe((data) => {
-      this.images = data.images;      
+      this.images = data.images;
       this.showImage();
     });
 
@@ -89,12 +81,6 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
       this.isImagensPresentes();
     }
   }
-
-  ngOnDestroy() {
-    this.eventsSubscription.unsubscribe()
-  }
-
-
 
   ngAfterViewInit() {
     this.inicializarCores();
@@ -112,7 +98,7 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     this.setStyleClass('footer-icon', 'color', this.buttonsColor);
   }
 
-  ngOnChanges(changes: SimpleChanges) {  
+  ngOnChanges(changes: SimpleChanges) {
     this.primaryColorChange(changes);
     this.buttonsColorChange(changes);
     this.defaultDownloadNameChange(changes);
@@ -164,6 +150,15 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     }
   }
 
+  //imagesChange(changes: SimpleChanges) {
+  //  if (changes['images'] && this.isImagensPresentes()) {
+  //    this.inicializarImageViewer();
+  //    setTimeout(() => {
+  //      this.showImage();
+  //    }, 1000);
+  //  }
+  //}
+
   imagesChange() {
     if (this.isImagensPresentes()) {
       this.initializeImageViewer();
@@ -171,11 +166,6 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
         this.showImage();
       }, 1000);
     }
-  }
-
-  isImagensPresentes() {
-    return this.images
-      && this.images.length > 0;
   }
 
   initializeImageViewer() {
@@ -187,6 +177,21 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     this.wrapper.find('.total').html(this.totalImagens);
     this.rotacaoImagemAtual = 0;
   }
+
+  isImagensPresentes() {
+    return this.images
+      && this.images.length > 0;
+  }
+
+  //inicializarImageViewer() {
+  //  this.currentImageIndex = 1;
+  //  this.totalImagens = this.images.length;
+  //  this.wrapper = $(`#${this.idContainer}`);
+  //  this.curSpan = this.wrapper.find('.current');
+  //  this.viewer = ImageViewer(this.wrapper.find('.image-container'));
+  //  this.wrapper.find('.total').html(this.totalImagens);
+  //  this.rotacaoImagemAtual = 0;
+  //}
 
   showImage() {
     this.prepararTrocaImagem();
@@ -211,22 +216,18 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
   carregarViewerPDF() {
     this.esconderBotoesImageViewer();
     const { widthIframe, heightIframe } = this.getTamanhoIframe();
-    this.insertIframe(widthIframe, heightIframe);
+    this.injetarIframe(widthIframe, heightIframe);
   }
 
-  insertIframe(widthIframe: number, heightIframe: number) {
-   // const ivImageWrap = document.getElementsByClassName('iv-image-wrap').item(0);
+  injetarIframe(widthIframe: number, heightIframe: number) {
+    const ivImageWrap = document.getElementsByClassName('iv-image-wrap').item(0);
 
-
-    const ivLargeImage = document.getElementsByClassName('image-gallery-2').item(0);
-    const ivImageWrap = ivLargeImage.getElementsByClassName('iv-image-wrap').item(0);
-   
     const iframe = document.createElement('iframe');
 
     iframe.id = this.getIdIframe();
     iframe.style.width = `${widthIframe}px`;
     iframe.style.height = `${heightIframe}px`;
-    iframe.src = `${this.convertPDFBase64ToBlob()}`;
+    iframe.src = `${this.converterPDFBase64ParaBlob()}`;
 
     this.renderer.appendChild(ivImageWrap, iframe);
   }
@@ -258,34 +259,21 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     this.limparCacheElementos();
   }
 
-
-  findAncestor(el, cls) {
-    while (
-      (el = el.parentElement) &&
-      !el.classList.contains(cls));
-  return el;
-}
-
   limparCacheElementos() {
 
-    //  const container = document.getElementById(this.idContainer); //gives an error: cannot remove child node from this container
-  //  const container = document.getElementsByClassName('iv-image-wrap').item(0);   
+    // const container =document.getElementById(this.idContainer);
+    const container = document.getElementsByClassName('iv-image-wrap').item(0);
     const iframeElement = document.getElementById(this.getIdIframe());
     const ivLargeImage = document.getElementsByClassName('iv-large-image').item(0);
-    let container;
+
     if (iframeElement) {
 
-      container =  this.findAncestor(iframeElement, 'image-gallery-2');
-      setTimeout(() => {       
-          this.renderer.removeChild(container, iframeElement); 
-      }, 1000);
-      
+      this.renderer.removeChild(container, iframeElement);
     }
 
     if (iframeElement) {
 
-      container = this.findAncestor(iframeElement, 'image-gallery-2');      
-      setTimeout(() => { this.renderer.removeChild(container, ivLargeImage); }, 1000);     
+      this.renderer.removeChild(container, ivLargeImage);
     }
 
     this.setStyleClass('iv-loader', 'visibility', 'auto');
@@ -298,7 +286,12 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     if (this.currentImageIndex > this.totalImagens) {
       this.currentImageIndex = 1;
     }
-    this.onNext.emit(this.currentImageIndex);  
+    this.onNext.emit(this.currentImageIndex);
+    if (!this.isPDF() && this.showOnlyPDF) {
+      this.proximaImagem();
+      return;
+    }
+    this.showImage();
   }
 
   imagemAnterior() {
@@ -307,7 +300,12 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     if (this.currentImageIndex <= 0) {
       this.currentImageIndex = this.totalImagens;
     }
-    this.onPrevious.emit(this.currentImageIndex);  
+    this.onPrevious.emit(this.currentImageIndex);
+    if (!this.isPDF() && this.showOnlyPDF) {
+      this.imagemAnterior();
+      return;
+    }
+    this.showImage();
   }
 
   rotacionarDireita() {
@@ -422,7 +420,7 @@ export class ImageViewerComponent implements OnChanges, OnInit, AfterViewInit, O
     }, timeout);
   }
 
-  convertPDFBase64ToBlob() {
+  converterPDFBase64ParaBlob() {
 
     const arrBuffer = this.base64ToArrayBuffer(this.getImagemAtual());
 

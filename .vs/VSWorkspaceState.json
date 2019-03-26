@@ -1,13 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\node_modules\\@fortawesome",
-    "\\node_modules\\@fortawesome\\free-solid-svg-icons",
     "\\src",
     "\\src\\app",
     "\\src\\app\\image-viewer",
+    "\\src\\app\\image-viewer-original",
     "\\src\\assets"
   ],
-  "SelectedNode": "\\src\\app\\app.component.ts",
+  "SelectedNode": "\\src\\app\\image-viewer-original\\image-viewer-original.component.ts",
   "PreviewInSolutionExplorer": false
 }
